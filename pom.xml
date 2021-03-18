@@ -7,6 +7,16 @@
     <groupId>org.example</groupId>
     <artifactId>ScreenSharek</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>src/main/resources/Fonts</directory>
+            </resource>
+        </resources>
+    </build>
 
 
 </project>
