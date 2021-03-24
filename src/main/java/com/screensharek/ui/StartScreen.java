@@ -37,6 +37,7 @@ public class StartScreen {
         configureFont();
         panelButton = new JPanel();
         panelButtonLayout = new BoxLayout(panelButton, BoxLayout.Y_AXIS);
+        //frame.setLayout();
     }
 
     /**
@@ -105,12 +106,17 @@ public class StartScreen {
      * Configure the main panel.
      */
     public void configurePanelButton() {
-        //JPanel panel = new JPanel();
-        //panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-        //panel.setBackground(new Color(97, 31, 0));
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+        panel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        //panel.setPreferredSize(new Dimension(935, 436));
+        panel.setBackground(new Color(50, 50, 50));
         panelButton.setLayout(panelButtonLayout);
+        panelButton.setAlignmentY(Component.CENTER_ALIGNMENT);
         panelButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         panelButton.setBackground(new Color(30, 30, 30));
+        //panelButton.setPreferredSize(new Dimension(700, 200));
+        panelButton.add(Box.createVerticalGlue());
         //panel.add(panelButton);
         frame.add(panelButton);
     }
@@ -135,7 +141,8 @@ public class StartScreen {
         connect.setAlignmentY(Component.CENTER_ALIGNMENT);
         connect.setFocusable(false);
         panelButton.add(connect);
-        panelButton.add(Box.createRigidArea(new Dimension(0,65)));
+        panelButton.add(Box.createVerticalGlue());
+        //panelButton.add(Box.createRigidArea(new Dimension(0,65)));
     }
 
     /**
@@ -157,5 +164,6 @@ public class StartScreen {
         shareScreen.setAlignmentY(Component.CENTER_ALIGNMENT);
         shareScreen.setFocusable(false);
         panelButton.add(shareScreen);
+        panelButton.add(Box.createRigidArea(new Dimension(0, 45)));
     }
 }
