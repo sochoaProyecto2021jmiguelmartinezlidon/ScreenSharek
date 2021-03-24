@@ -16,7 +16,7 @@ public class StartScreen {
     private BoxLayout panelButtonLayout;
 
     /**
-     * Initialize the class and configure the components.
+     * Initialize the object and configure the components.
      */
     public void init() {
         startComponents();
