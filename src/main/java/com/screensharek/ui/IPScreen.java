@@ -1,5 +1,8 @@
 package com.screensharek.ui;
 
+
+import com.screensharek.components.JImage;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
@@ -20,6 +23,7 @@ public class IPScreen {
     private JPanel master;
     private Font font;
     private String text;
+    private GridBagConstraints constraints;
 
     /**
      * Initialize the object and configure the components.
@@ -31,6 +35,8 @@ public class IPScreen {
         configureFont();
         setDescriptionText();
         startPanels();
+        startForm();
+        startButtons();
         frame.setVisible(true);
     }
 
@@ -49,6 +55,7 @@ public class IPScreen {
         master = new JPanel();
         form = new JPanel();
         buttons = new JPanel();
+        constraints = new GridBagConstraints();
     }
 
     /**
@@ -76,6 +83,7 @@ public class IPScreen {
         frame.setBackground(new Color(30, 30, 30));
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         master.setLayout(new BoxLayout(master, BoxLayout.Y_AXIS));
+        master.setBackground(new Color(30, 30, 30));
         frame.add(master);
     }
 
@@ -83,14 +91,15 @@ public class IPScreen {
      * Set de text in the top of the window.
      */
     public void setDescriptionText() {
-        description.setText("<html>Introduce tu ip y el puerto<br>por donde quieres emitir</html>");
+        description.setText(text);
         description.setFont(font);
         description.setAlignmentX(Component.CENTER_ALIGNMENT);
         description.setForeground(new Color(158, 14, 86));
         description.setBackground(new Color(30, 30, 30));
         description.setOpaque(true);
-
-        description.setPreferredSize(new Dimension(100, 100));
+        description.setHorizontalAlignment(JLabel.CENTER);
+        description.setVerticalAlignment(JLabel.CENTER);
+        master.add(Box.createRigidArea(new Dimension(0, 5)));
         master.add(description);
     }
 
@@ -98,8 +107,9 @@ public class IPScreen {
      * Configure de panels.
      */
     public void startPanels() {
-        form.setLayout(new SpringLayout());
+        form.setLayout(new GridBagLayout());
         form.setBackground(new Color(30, 30, 30));
+        form.setMaximumSize(new Dimension(934, 250));
         form.setAlignmentX(Component.CENTER_ALIGNMENT);
         master.add(form);
 
@@ -107,5 +117,98 @@ public class IPScreen {
         buttons.setBackground(new Color(30, 30, 30));
         buttons.setAlignmentX(Component.CENTER_ALIGNMENT);
         master.add(buttons);
+    }
+
+    /**
+     * Create form of the window.
+     */
+    public void startForm() {
+        JImage img = new JImage(IPScreen.class.getResource("/TextBox.png").getPath());
+        img.setFormat(JImage.Format.ORIGINAL);
+        img.setPreferredSize(new Dimension(300, 41));
+        ipTextField.setBorder(null);
+        ipTextField.setBounds(5, 5, 295, 36);
+        ipTextField.setBackground(new Color(0, true));
+        ipTextField.setOpaque(false);
+        ipTextField.setFont(font);
+        ipTextField.setForeground(new Color(71, 13, 121));
+        img.add(ipTextField);
+
+        ipLabel.setText("ip: ");
+        ipLabel.setFont(font);
+        ipLabel.setHorizontalAlignment(JLabel.RIGHT);
+        ipLabel.setForeground(new Color(158, 14, 86));
+        ipLabel.setLabelFor(img);
+
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.ipady = 0;
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+        form.add(ipLabel, constraints);
+
+        constraints.ipady = 25;
+        constraints.gridx = 1;
+        constraints.gridy = 0;
+        form.add(img, constraints);
+
+        JImage img2 = new JImage(IPScreen.class.getResource("/TextBox.png").getPath());
+        img2.setFormat(JImage.Format.ORIGINAL);
+        img2.setPreferredSize(new Dimension(300, 41));
+        portTextField.setBorder(null);
+        portTextField.setBounds(5, 5, 295, 36);
+        portTextField.setBackground(new Color(0, true));
+        portTextField.setOpaque(false);
+        portTextField.setFont(font);
+        portTextField.setForeground(new Color(71, 13, 121));
+        img2.add(portTextField);
+
+        portLabel.setText("port: ");
+        portLabel.setFont(font);
+        portLabel.setForeground(new Color(158, 14, 86));
+        portLabel.setLabelFor(img);
+
+        constraints.ipady = 0;
+        constraints.gridx = 0;
+        constraints.gridy = 1;
+        form.add(portLabel, constraints);
+
+        constraints.ipady = 25;
+        constraints.gridx = 1;
+        constraints.gridy = 1;
+        form.add(img2, constraints);
+    }
+
+    /**
+     * Configure buttons
+     */
+    public void startButtons() {
+        Icon button = new ImageIcon(IPScreen.class.getResource("/ButtonChiquito.png"));
+        Icon buttonHover = new ImageIcon(IPScreen.class.getResource("/ButtonChiquitoHover.png"));
+
+        cancel.setIcon(button);
+        cancel.setRolloverIcon(buttonHover);
+        cancel.setForeground(new Color(0, 0, 0));
+        cancel.setPreferredSize(new Dimension(234, 52));
+        cancel.setFont(font);
+        cancel.setBorderPainted(false);
+        cancel.setContentAreaFilled(false);
+        cancel.setText("cancelar");
+        cancel.setHorizontalTextPosition(SwingConstants.CENTER);
+        cancel.setAlignmentY(Component.CENTER_ALIGNMENT);
+        cancel.setFocusable(false);
+        buttons.add(cancel);
+
+        accept.setIcon(button);
+        accept.setRolloverIcon(buttonHover);
+        accept.setForeground(new Color(0, 0, 0));
+        accept.setPreferredSize(new Dimension(234, 52));
+        accept.setFont(font);
+        accept.setBorderPainted(false);
+        accept.setContentAreaFilled(false);
+        accept.setText("aceptar");
+        accept.setHorizontalTextPosition(SwingConstants.CENTER);
+        accept.setAlignmentY(Component.CENTER_ALIGNMENT);
+        accept.setFocusable(false);
+        buttons.add(accept);
     }
 }

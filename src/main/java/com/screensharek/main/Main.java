@@ -8,6 +8,6 @@ public class Main {
         StartScreen startScreen = new StartScreen();
         startScreen.init();
         IPScreen ipScreen = new IPScreen();
-        ipScreen.init("Introduce tu ip y el puerto\npor donde quieres emitir");
+        ipScreen.init("<html>Introduce tu ip y el puerto<br>por donde quieres emitir</html>");
     }
 }
