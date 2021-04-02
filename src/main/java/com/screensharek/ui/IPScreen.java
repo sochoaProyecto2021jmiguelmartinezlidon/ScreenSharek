@@ -22,14 +22,14 @@ public class IPScreen {
     private JPanel buttons;
     private JPanel master;
     private Font font;
-    private String text;
     private GridBagConstraints constraints;
+    private ShareScreen.Mode mode;
 
     /**
      * Initialize the object and configure the components.
      */
-    public void init(String text) {
-        this.text = text;
+    public void init(ShareScreen.Mode mode) {
+        this.mode = mode;
         startComponents();
         startFrame();
         configureFont();
@@ -64,7 +64,6 @@ public class IPScreen {
     public void configureFont() {
         try {
             File fontFile = new File("./Fonts/aAhaWow.ttf");
-            System.out.println(fontFile.getPath());
             font = Font.createFont(Font.PLAIN, fontFile).deriveFont(30f);
         } catch (FontFormatException | IOException | NullPointerException e) {
             // TODO: Delete print stack trace when develop is end.
@@ -91,7 +90,7 @@ public class IPScreen {
      * Set de text in the top of the window.
      */
     public void setDescriptionText() {
-        description.setText(text);
+        description.setText(getTextByMode());
         description.setFont(font);
         description.setAlignmentX(Component.CENTER_ALIGNMENT);
         description.setForeground(new Color(158, 14, 86));
@@ -196,6 +195,12 @@ public class IPScreen {
         cancel.setHorizontalTextPosition(SwingConstants.CENTER);
         cancel.setAlignmentY(Component.CENTER_ALIGNMENT);
         cancel.setFocusable(false);
+        // TODO: 02/04/2021 put in method in controller.
+        cancel.addActionListener(actionEvent -> {
+            StartScreen startScreen = new StartScreen();
+            startScreen.init();
+            frame.dispose();
+        });
         buttons.add(cancel);
 
         accept.setIcon(button);
@@ -209,6 +214,22 @@ public class IPScreen {
         accept.setHorizontalTextPosition(SwingConstants.CENTER);
         accept.setAlignmentY(Component.CENTER_ALIGNMENT);
         accept.setFocusable(false);
+        // TODO: 02/04/2021 put in method in controller.
+        accept.addActionListener(actionEvent -> {
+            ShareScreen shareScreen = new ShareScreen();
+            shareScreen.init(mode);
+            frame.dispose();
+        });
         buttons.add(accept);
+    }
+
+    private String getTextByMode() {
+        switch (mode) {
+            case WATCHING:
+                return "<html>Introduce la ip y el puerto<br>al que te quieres conectar</html>";
+            case SHARING:
+                return "<html>Introduce tu ip y el puerto<br>por donde quieres emitir</html>";
+        }
+        return "";
     }
 }

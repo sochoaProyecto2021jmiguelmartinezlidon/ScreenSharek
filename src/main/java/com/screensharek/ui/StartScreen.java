@@ -47,7 +47,7 @@ public class StartScreen {
         try {
             createFontIfNotExists();
             File fontFile = new File("./Fonts/aAhaWow.ttf");
-            System.out.println(fontFile.getPath());
+            
             font = Font.createFont(Font.PLAIN, fontFile).deriveFont(24f);
         } catch (FontFormatException | IOException | NullPointerException e) {
             // TODO: Delete print stack trace when develop is end.
@@ -142,7 +142,13 @@ public class StartScreen {
         connect.setFocusable(false);
         panelButton.add(connect);
         panelButton.add(Box.createVerticalGlue());
-        //panelButton.add(Box.createRigidArea(new Dimension(0,65)));
+
+        // TODO: 02/04/2021 change this to method in controller.
+        connect.addActionListener(actionEvent -> {
+            IPScreen ipScreen = new IPScreen();
+            ipScreen.init(ShareScreen.Mode.WATCHING);
+            frame.dispose();
+        });
     }
 
     /**
@@ -165,5 +171,12 @@ public class StartScreen {
         shareScreen.setFocusable(false);
         panelButton.add(shareScreen);
         panelButton.add(Box.createRigidArea(new Dimension(0, 45)));
+
+        // TODO: 02/04/2021 change this to method in controller.
+        shareScreen.addActionListener(actionEvent -> {
+            IPScreen ipScreen = new IPScreen();
+            ipScreen.init(ShareScreen.Mode.SHARING);
+            frame.dispose();
+        });
     }
 }

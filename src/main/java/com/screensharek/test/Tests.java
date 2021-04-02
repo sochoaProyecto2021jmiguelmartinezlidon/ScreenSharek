@@ -18,13 +18,13 @@ public class Tests {
         try {
             Robot robot = new Robot();
             TestCapturaPantalla captura = new TestCapturaPantalla(robot);
-            //captura.takeCapture();
+            captura.takeCapture();
             //captura.save();
             JFrame frame = new JFrame();
             frame.setSize(800, 600);
             JImage jImage = new JImage();
             jImage.setFormat(JImage.Format.STRETCH);
-            //jImage.setImage(captura.getImage());
+            jImage.setImage(captura.getImage());
             jImage.setPreferredSize(new Dimension(800, 600));
             frame.add(jImage);
             frame.setVisible(true);
