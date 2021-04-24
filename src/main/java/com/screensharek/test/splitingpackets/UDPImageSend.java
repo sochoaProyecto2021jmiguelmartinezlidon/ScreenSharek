@@ -1,8 +1,11 @@
 package com.screensharek.test.splitingpackets;
 
+import com.screensharek.utils.ByteUtils;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -15,7 +18,8 @@ public class UDPImageSend {
             Robot robot = new Robot();
             BufferedImage image = robot.createScreenCapture(new Rectangle(Toolkit.getDefaultToolkit().getScreenSize()));
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(image, "png", baos);
+            ImageIO.write(image, "jpg", baos);
+            BufferedImage test = ImageIO.read(new ByteArrayInputStream(baos.toByteArray()));
             byte[][] imageSplited = splitImage(baos.toByteArray());
             DatagramSocket socketUDP = new DatagramSocket(9999);
             InetAddress ia = InetAddress.getByName("192.168.18.254");
@@ -23,9 +27,10 @@ public class UDPImageSend {
                 DatagramPacket packet = new DatagramPacket(imageSplited[i], imageSplited[i].length, ia, 9998);
                 socketUDP.send(packet);
             }
-            byte[] finisBytes = createFinishArray();
+            socketUDP.close();
+            /*byte[] finisBytes = createFinishArray();
             DatagramPacket finisPacket = new DatagramPacket(finisBytes, finisBytes.length, ia, 9998);
-            socketUDP.send(finisPacket);
+            socketUDP.send(finisPacket);*/
         } catch (AWTException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -36,7 +41,7 @@ public class UDPImageSend {
     public static byte[][] splitImage(byte[] image) {
         double parts = image.length / 59997.0f;
         double numOfPackets = Math.ceil(parts);
-        if (numOfPackets > 15) {
+        if (numOfPackets > 14) {
             System.out.println("La imagen es demasiado grande.");
             return new byte[0][0];
         }
@@ -45,12 +50,20 @@ public class UDPImageSend {
             int k = 3;
             long nPacket = i + 1;
             nPacket = nPacket << 4;
+            nPacket = nPacket | (long) numOfPackets;
+            byte[] aux = ByteUtils.longToBytes(nPacket);
+            imageSplit[i][0] = aux[7];
             int startPosition = i * 59997;
-            for (int j = startPosition; j < startPosition + 59997; j++, k++) {
+            int lengthCount = 0;
+            for (int j = startPosition; j < startPosition + 59994; j++, k++) {
                 if (j == image.length)
                     break;
                 imageSplit[i][k] = image[j];
+                lengthCount++;
             }
+            byte[] length = ByteUtils.longToBytes(lengthCount);
+            imageSplit[i][1] = length[7];
+            imageSplit[i][2] = length[6];
         }
         return imageSplit;
     }

@@ -15,32 +15,48 @@ public class UDPImageReceive {
 
     public static void main(String[] args) {
 
-        long numLong = 15;
+        /*long numLong = 15;
+        long num4bits = 15;
         numLong = numLong << 4;
+        numLong = numLong | num4bits;
         byte[] numBytes = longToBytes(numLong);
         long numParsed = bytesToLong(numBytes);
-        numParsed = numParsed >> 4;
+        long npacket = numParsed & 240;
+        long nofpacket = numParsed & 15;
+        npacket = numParsed >> 4;*/
 
-
-        byte[] buff = new byte[60000];
+        byte[] buff;
 
         try {
             SocketAddress sa = new InetSocketAddress("192.168.18.254", 9998);
             DatagramSocket socketUDP = new DatagramSocket(null);
             socketUDP.bind(sa);
-            DatagramPacket packet = new DatagramPacket(buff, buff.length);
             byte[] bytes;
+            byte[][] imageMessy = null;
+            int count = 0;
+            int packets = 0;
             do {
+                buff = new byte[60000];
+                DatagramPacket packet = new DatagramPacket(buff, buff.length);
                 socketUDP.receive(packet);
                 bytes = packet.getData();
-            } while (!isFinalPacket(bytes));
-            FileOutputStream fos = new FileOutputStream("C:\\Users\\Jose\\Desktop\\Proyecto21\\testImages\\image001.png");
+                if (imageMessy == null) {
+                    packets = getNumberOfPackets(new byte[] {0, 0, 0, 0, 0, 0, 0, bytes[0]});
+                    imageMessy = new byte[packets][];
+                }
+                imageMessy[count] = bytes;
+                count++;
+            } while (count < packets);
+            image = assembleImage(imageMessy);
+            BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(image));
+            imageMessy = null;
+            /*FileOutputStream fos = new FileOutputStream("C:\\Users\\Jose\\Desktop\\Proyecto21\\testImages\\image001.png");
             OutputStream os = new BufferedOutputStream(fos);
             ImageReader reader = ImageIO.getImageReadersByFormatName("png").next();
             ImageInputStream iis = new MemoryCacheImageInputStream(new ByteArrayInputStream(image));
             reader.setInput(iis);
             BufferedImage renderImage = reader.read(0);
-            ImageIO.write(renderImage, "png", os);
+            ImageIO.write(renderImage, "png", os);*/
         } catch (SocketException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -80,6 +96,54 @@ public class UDPImageReceive {
         return true;
     }
 
+    public static byte[] assembleImage(byte[][] imageSplitted) {
+        if (imageSplitted == null)
+            return new byte[0];
+        byte[][] imageSort = new byte[imageSplitted.length][];
+        for (int i = 0; i < imageSplitted.length; i++) {
+            resetBuffer();
+            long packetInfo = bytesToLong(new byte[] {0, 0, 0, 0, 0, 0, 0, imageSplitted[i][0]});
+            long numPacket = packetInfo & 240;
+            numPacket = numPacket >> 4;
+            long numOfPackets = packetInfo & 15;
+            if (numOfPackets != imageSplitted.length) {
+                imageSort = new byte[(int) numOfPackets][];
+            }
+            // TODO: 21/04/2021 Revisar que en el otro lado no se pueda poner un tamaño superior al que se puede indicar en dos bytes.
+            resetBuffer();
+            byte[] dataRawLength = new byte[] {0, 0, 0, 0, 0, 0, imageSplitted[i][1], imageSplitted[i][2]};
+            long dataLength = bytesToLong(dataRawLength);
+            int k = 3;
+            for (int j = 0; j < dataLength; j++, k++) {
+                if (j == 0)
+                    imageSort[i] = new byte[(int) dataLength];
+                imageSort[i][j] = imageSplitted[(int) (numPacket - 1)][k];
+            }
+        }
+        return matrixToByteArray(imageSort);
+    }
+
+    public static int getNumberOfPackets(byte[] packet) {
+        long packetInfo = bytesToLong(packet);
+        long numOfPackets = packetInfo & 15;
+        return (int) numOfPackets;
+    }
+
+    public static byte[] matrixToByteArray(byte[][] matrix) {
+        int totalLength = 0;
+        for (int i = 0; i < matrix.length; i++) {
+            totalLength += matrix[i].length;
+        }
+        byte[] array = new byte[totalLength];
+        int k = 0;
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++, k++) {
+                array[k] = matrix[i][j];
+            }
+        }
+        return array;
+    }
+
     public static void addBytes(byte[] bytes) {
         if (image == null) {
             image = bytes;
@@ -99,6 +163,10 @@ public class UDPImageReceive {
 
     private static ByteBuffer buffer = ByteBuffer.allocate(Long.BYTES);
 
+    public static void resetBuffer() {
+        buffer = ByteBuffer.allocate(Long.BYTES);
+    }
+
     public static byte[] longToBytes(long x) {
         buffer.putLong(0, x);
         return buffer.array();
@@ -106,6 +174,12 @@ public class UDPImageReceive {
 
     public static long bytesToLong(byte[] bytes) {
         buffer.put(bytes, 0, bytes.length);
+        buffer.flip();//need flip
+        return buffer.getLong();
+    }
+
+    public static long bytesToLong(byte bytes) {
+        buffer.put(bytes);
         buffer.flip();//need flip
         return buffer.getLong();
     }
