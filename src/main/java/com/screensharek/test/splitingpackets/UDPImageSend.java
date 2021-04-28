@@ -1,5 +1,6 @@
 package com.screensharek.test.splitingpackets;
 
+import com.screensharek.ui.ShareScreen;
 import com.screensharek.utils.ByteUtils;
 
 import javax.imageio.ImageIO;
@@ -13,21 +14,47 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 
 public class UDPImageSend {
+
+
     public static void main(String[] args) {
         try {
-            Robot robot = new Robot();
-            BufferedImage image = robot.createScreenCapture(new Rectangle(Toolkit.getDefaultToolkit().getScreenSize()));
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(image, "jpg", baos);
-            BufferedImage test = ImageIO.read(new ByteArrayInputStream(baos.toByteArray()));
-            byte[][] imageSplited = splitImage(baos.toByteArray());
+
+            //BufferedImage test = ImageIO.read(new ByteArrayInputStream(baos.toByteArray()));
+
             DatagramSocket socketUDP = new DatagramSocket(9999);
             InetAddress ia = InetAddress.getByName("192.168.18.254");
-            for (int i = 0; i < imageSplited.length; i++) {
-                DatagramPacket packet = new DatagramPacket(imageSplited[i], imageSplited[i].length, ia, 9998);
-                socketUDP.send(packet);
-            }
-            socketUDP.close();
+            Robot robot = new Robot();
+            new Thread(() -> {
+                while (true) {
+
+                    BufferedImage image = robot.createScreenCapture(new Rectangle(Toolkit.getDefaultToolkit().getScreenSize()));
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    try {
+                        ImageIO.write(image, "jpg", baos);
+                        byte[][] imageSplited = splitImage(baos.toByteArray());
+                        System.out.println("Enviando...");
+                        for (int i = 0; i < imageSplited.length; i++) {
+                            DatagramPacket packet = new DatagramPacket(imageSplited[i], imageSplited[i].length, ia, 9998);
+                            socketUDP.send(packet);
+                        }
+                        Thread.sleep(14);
+                        byte[] response = new byte[1];
+                        DatagramPacket packet = new DatagramPacket(response, response.length);
+                        socketUDP.receive(packet);
+                        if (packet.getData()[0] == 2) {
+                            break;
+                        } else if (packet.getData()[0] == 1)
+                            System.out.println("Result OK!");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }).start();
+
+            //socketUDP.close();
             /*byte[] finisBytes = createFinishArray();
             DatagramPacket finisPacket = new DatagramPacket(finisBytes, finisBytes.length, ia, 9998);
             socketUDP.send(finisPacket);*/
@@ -46,6 +73,7 @@ public class UDPImageSend {
             return new byte[0][0];
         }
         byte[][] imageSplit = new byte[(int) numOfPackets][59997];
+        int test = 0;
         for (int i = 0; i < numOfPackets; i++) {
             int k = 3;
             long nPacket = i + 1;
@@ -53,7 +81,7 @@ public class UDPImageSend {
             nPacket = nPacket | (long) numOfPackets;
             byte[] aux = ByteUtils.longToBytes(nPacket);
             imageSplit[i][0] = aux[7];
-            int startPosition = i * 59997;
+            int startPosition = i * 59994;
             int lengthCount = 0;
             for (int j = startPosition; j < startPosition + 59994; j++, k++) {
                 if (j == image.length)
@@ -61,16 +89,10 @@ public class UDPImageSend {
                 imageSplit[i][k] = image[j];
                 lengthCount++;
             }
+            test += lengthCount;
             byte[] length = ByteUtils.longToBytes(lengthCount);
             imageSplit[i][1] = length[6];
             imageSplit[i][2] = length[7];
-        }
-        byte[] testImage = assembleImage(imageSplit);
-        BufferedImage testRebuildImage;
-        try {
-            testRebuildImage = ImageIO.read(new ByteArrayInputStream(testImage));
-        } catch (IOException e) {
-            e.printStackTrace();
         }
         return imageSplit;
     }

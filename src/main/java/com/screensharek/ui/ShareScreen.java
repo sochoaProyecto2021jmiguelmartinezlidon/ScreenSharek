@@ -82,4 +82,8 @@ public class ShareScreen {
         panel.add(Box.createRigidArea(new Dimension(5, 0)));
         screen.add(panel, BorderLayout.PAGE_END);
     }
+
+    public void putImage(byte[] img) {
+        screen.setImage(img);
+    }
 }

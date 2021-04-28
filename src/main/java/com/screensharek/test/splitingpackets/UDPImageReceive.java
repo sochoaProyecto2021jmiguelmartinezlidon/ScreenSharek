@@ -1,5 +1,8 @@
 package com.screensharek.test.splitingpackets;
 
+import com.screensharek.ui.ShareScreen;
+import com.screensharek.utils.ByteUtils;
+
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
@@ -33,23 +36,37 @@ public class UDPImageReceive {
             socketUDP.bind(sa);
             byte[] bytes;
             byte[][] imageMessy = null;
+            ShareScreen shareScreen = new ShareScreen();
+            shareScreen.init(ShareScreen.Mode.WATCHING);
+            InetAddress ia = InetAddress.getByName("192.168.18.254");
             int count = 0;
             int packets = 0;
-            do {
-                buff = new byte[60000];
-                DatagramPacket packet = new DatagramPacket(buff, buff.length);
-                socketUDP.receive(packet);
-                bytes = packet.getData();
-                if (imageMessy == null) {
-                    packets = getNumberOfPackets(new byte[] {0, 0, 0, 0, 0, 0, 0, bytes[0]});
-                    imageMessy = new byte[packets][];
-                }
-                imageMessy[count] = bytes;
-                count++;
-            } while (count < packets);
-            image = assembleImage(imageMessy);
-            BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(image));
-            imageMessy = null;
+            while(true) {
+                do {
+                    buff = new byte[60000];
+                    DatagramPacket packet = new DatagramPacket(buff, buff.length);
+                    socketUDP.receive(packet);
+                    bytes = packet.getData();
+                    if (imageMessy == null) {
+                        packets = getNumberOfPackets(new byte[]{0, 0, 0, 0, 0, 0, 0, bytes[0]});
+                        imageMessy = new byte[packets][];
+                    }
+                    imageMessy[count] = bytes;
+                    count++;
+                } while (count < packets);
+                count = 0;
+                packets = 0;
+                System.out.println("Imagen recibida.");
+                byte[] response = new byte[1];
+                response[0] = 1;
+                DatagramPacket packet = new DatagramPacket(response, response.length, ia, 9999);
+                socketUDP.send(packet);
+                System.out.println("OK! enviado.");
+                image = assembleImage(imageMessy);
+                //BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(image));
+                shareScreen.putImage(image);
+                imageMessy = null;
+            }
             /*FileOutputStream fos = new FileOutputStream("C:\\Users\\Jose\\Desktop\\Proyecto21\\testImages\\image001.png");
             OutputStream os = new BufferedOutputStream(fos);
             ImageReader reader = ImageIO.getImageReadersByFormatName("png").next();
@@ -106,9 +123,9 @@ public class UDPImageReceive {
             long numPacket = packetInfo & 240;
             numPacket = numPacket >> 4;
             long numOfPackets = packetInfo & 15;
-            if (numOfPackets != imageSplitted.length) {
+            /*if (numOfPackets != imageSplitted.length) {
                 imageSort = new byte[(int) numOfPackets][];
-            }
+            }*/
             // TODO: 21/04/2021 Revisar que en el otro lado no se pueda poner un tamaño superior al que se puede indicar en dos bytes.
             resetBuffer();
             byte[] dataRawLength = new byte[] {0, 0, 0, 0, 0, 0, imageSplitted[i][1], imageSplitted[i][2]};
@@ -124,6 +141,7 @@ public class UDPImageReceive {
     }
 
     public static int getNumberOfPackets(byte[] packet) {
+        resetBuffer();
         long packetInfo = bytesToLong(packet);
         long numOfPackets = packetInfo & 15;
         return (int) numOfPackets;
