@@ -4,6 +4,7 @@ import com.screensharek.components.JImage;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 
 public class ShareScreen {
 
@@ -16,6 +17,9 @@ public class ShareScreen {
     private JButton maximize;
     private JButton exit;
     private Mode mode;
+    private boolean isMaximized = false;
+    private final Icon minimizeIcon = new ImageIcon(ShareScreen.class.getResource("/FullscreenMinimize.png"));
+    private final Icon maximizeIcon = new ImageIcon(ShareScreen.class.getResource("/FullscreenMaximize.png"));
 
     public void init(Mode mode) {
         this.mode = mode;
@@ -49,8 +53,8 @@ public class ShareScreen {
     }
 
     private void startButtons() {
-        Icon maximizeIcon = new ImageIcon(ShareScreen.class.getResource("/FullscreenMaximize.png"));
-        Icon minimizeIcon = new ImageIcon(ShareScreen.class.getResource("/FullscreenMinimize.png"));
+
+
         Icon exitIcon = new ImageIcon(ShareScreen.class.getResource("/Exit.png"));
         Icon exitIconHover = new ImageIcon(ShareScreen.class.getResource("/ExitHover.png"));
         JPanel panel = new JPanel();
@@ -65,11 +69,11 @@ public class ShareScreen {
         exit.setFocusable(false);
         exit.setContentAreaFilled(false);
         // TODO: 02/04/2021 put in a method of controller.
-        exit.addActionListener(actionEvent -> {
+        /*exit.addActionListener(actionEvent -> {
             StartScreen startScreen = new StartScreen();
             startScreen.init();
             frame.dispose();
-        });
+        });*/
         maximize.setIcon(maximizeIcon);
         maximize.setBorderPainted(false);
         maximize.setBorder(null);
@@ -81,6 +85,33 @@ public class ShareScreen {
         panel.add(maximize);
         panel.add(Box.createRigidArea(new Dimension(5, 0)));
         screen.add(panel, BorderLayout.PAGE_END);
+    }
+
+    public void setExitListener(ActionListener listener) {
+        exit.addActionListener(listener);
+    }
+
+    public void setMaximizeListener(ActionListener listener) {
+        maximize.addActionListener(listener);
+    }
+
+    public void maximizeMinimize() {
+        if (isMaximized) {
+            frame.setExtendedState(JFrame.NORMAL);
+            //frame.setUndecorated(false);
+            maximize.setIcon(maximizeIcon);
+            isMaximized = false;
+        } else {
+            frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+            //frame.setUndecorated(true);
+            maximize.setIcon(minimizeIcon);
+            isMaximized = true;
+        }
+
+    }
+
+    public void dispose() {
+        frame.dispose();
     }
 
     public void putImage(byte[] img) {

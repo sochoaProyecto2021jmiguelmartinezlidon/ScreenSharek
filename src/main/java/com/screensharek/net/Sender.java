@@ -79,7 +79,7 @@ public class Sender {
         portClient = packet.getPort();
     }
 
-    private void sendImage(byte[][] splitImage) {
+    public void sendImage(byte[][] splitImage) {
         for (int i = 0; i < splitImage.length; i++) {
             try {
                 DatagramPacket packet = new DatagramPacket(splitImage[i], splitImage[i].length, iaClient, portClient);
@@ -90,7 +90,7 @@ public class Sender {
         }
     }
 
-    private int getResponse() {
+    public int getResponse() {
         int response;
         byte[] buff = new byte[1];
         DatagramPacket packet = new DatagramPacket(buff, buff.length);

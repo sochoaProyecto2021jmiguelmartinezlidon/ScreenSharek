@@ -2,6 +2,7 @@ package com.screensharek.ui;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -144,11 +145,19 @@ public class StartScreen {
         panelButton.add(Box.createVerticalGlue());
 
         // TODO: 02/04/2021 change this to method in controller.
-        connect.addActionListener(actionEvent -> {
+        /*connect.addActionListener(actionEvent -> {
             IPScreen ipScreen = new IPScreen();
             ipScreen.init(ShareScreen.Mode.WATCHING);
             frame.dispose();
-        });
+        });*/
+    }
+
+    /**
+     * Set the listener to button connect.
+     * @param listener to put in button connect.
+     */
+    public void setConnectButtonListener(ActionListener listener) {
+        connect.addActionListener(listener);
     }
 
     /**
@@ -173,10 +182,29 @@ public class StartScreen {
         panelButton.add(Box.createRigidArea(new Dimension(0, 45)));
 
         // TODO: 02/04/2021 change this to method in controller.
-        shareScreen.addActionListener(actionEvent -> {
+        /*shareScreen.addActionListener(actionEvent -> {
             IPScreen ipScreen = new IPScreen();
             ipScreen.init(ShareScreen.Mode.SHARING);
             frame.dispose();
-        });
+        });*/
+    }
+
+    /**
+     * Set the listener to button share.
+     * @param listener to put in button share.
+     */
+    public void setShareButtonListener(ActionListener listener) {
+        shareScreen.addActionListener(listener);
+    }
+
+    /**
+     * Dispose de frame of this window.
+     */
+    public void dispose() {
+        frame.dispose();
+    }
+
+    public void setVisible(boolean visible) {
+        frame.setVisible(visible);
     }
 }

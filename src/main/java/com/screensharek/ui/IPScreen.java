@@ -5,6 +5,7 @@ import com.screensharek.components.JImage;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 
@@ -196,11 +197,11 @@ public class IPScreen {
         cancel.setAlignmentY(Component.CENTER_ALIGNMENT);
         cancel.setFocusable(false);
         // TODO: 02/04/2021 put in method in controller.
-        cancel.addActionListener(actionEvent -> {
+        /*cancel.addActionListener(actionEvent -> {
             StartScreen startScreen = new StartScreen();
             startScreen.init();
             frame.dispose();
-        });
+        });*/
         buttons.add(cancel);
 
         accept.setIcon(button);
@@ -215,11 +216,11 @@ public class IPScreen {
         accept.setAlignmentY(Component.CENTER_ALIGNMENT);
         accept.setFocusable(false);
         // TODO: 02/04/2021 put in method in controller.
-        accept.addActionListener(actionEvent -> {
+        /*accept.addActionListener(actionEvent -> {
             ShareScreen shareScreen = new ShareScreen();
             shareScreen.init(mode);
             frame.dispose();
-        });
+        });*/
         buttons.add(accept);
     }
 
@@ -231,5 +232,34 @@ public class IPScreen {
                 return "<html>Introduce tu ip y el puerto<br>por donde quieres emitir</html>";
         }
         return "";
+    }
+
+    public void setIpAndPort(String ip, String port) {
+        ipTextField.setText(ip);
+        portTextField.setText(port);
+    }
+
+    public void setAcceptListener(ActionListener listener) {
+        accept.addActionListener(listener);
+    }
+
+    public void setCancelListener(ActionListener listener) {
+        cancel.addActionListener(listener);
+    }
+
+    public ShareScreen.Mode getMode() {
+        return mode;
+    }
+
+    public String getIp() {
+        return ipTextField.getText();
+    }
+
+    public int getPort() {
+        return Integer.parseInt(portTextField.getText());
+    }
+
+    public void dispose() {
+        frame.dispose();
     }
 }
