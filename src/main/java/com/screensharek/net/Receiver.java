@@ -3,10 +3,7 @@ package com.screensharek.net;
 import com.screensharek.utils.ByteUtils;
 
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketException;
+import java.net.*;
 
 public class Receiver {
     private String ipServer;
@@ -48,8 +45,14 @@ public class Receiver {
     }
 
     public void connect() {
-        if (iaServer == null)
-            return;
+        if (iaServer == null) {
+            try {
+                iaServer = InetAddress.getByName(ipServer);
+            } catch (UnknownHostException e) {
+                System.out.println("Wrong ip");
+                return;
+            }
+        }
         try {
             socketUDP = new DatagramSocket();
             byte[] buff = new byte[] {1};
@@ -63,8 +66,8 @@ public class Receiver {
     }
 
     public byte[][] getSplitImage() {
+        byte[][] imageMessy = null;
         try {
-            byte[][] imageMessy = null;
             int count = 0;
             int packets = 0;
             do {
@@ -81,7 +84,7 @@ public class Receiver {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return null;
+        return imageMessy;
     }
 
     public static int getNumberOfPackets(byte[] packet) {
@@ -97,6 +100,7 @@ public class Receiver {
         try {
             if (disconnect)
                 buff[0] = 2;
+            System.out.println(buff[0]);
             socketUDP.send(packet);
         } catch (IOException e) {
             e.printStackTrace();

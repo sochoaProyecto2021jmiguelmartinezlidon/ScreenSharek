@@ -72,6 +72,8 @@ public class Controller {
                 shareScreen.init(ShareScreen.Mode.WATCHING);
                 setConfigurationReceiver(ipScreen.getIp(), ipScreen.getPort());
                 configureButtonsShareScreen();
+
+                viewScreen();
                 ipScreen.dispose();
             });
         } else {
@@ -79,9 +81,9 @@ public class Controller {
                 shareScreen = new ShareScreen();
                 shareScreen.init(ShareScreen.Mode.SHARING);
                 setConfigurationSender(ipScreen.getIp(), ipScreen.getPort());
-                ipScreen.dispose();
                 configureButtonsShareScreen();
                 shareScreen();
+                ipScreen.dispose();
             });
         }
         ipScreen.setCancelListener(actionEvent -> {
@@ -92,6 +94,7 @@ public class Controller {
 
     public void configureButtonsShareScreen() {
         shareScreen.setExitListener(actionEvent -> {
+            receiver.disconnect();
             startApp();
             shareScreen.dispose();
         });
@@ -102,16 +105,39 @@ public class Controller {
     }
 
     public void shareScreen() {
-        sender.startShare();
         new Thread(() -> {
+            sender.startShare();
             int response = 1;
-            if (captureScreen == null)
+            if (captureScreen == null) {
                 captureScreen = new CaptureScreen();
+                captureScreen.init();
+            }
             do {
                 byte[] image = captureScreen.takeCapture();
+                shareScreen.putImage(image);
+                System.out.println("Sending...");
                 sender.sendImage(ImageUtils.splitImage(image));
-                response = sender.getResponse();
+                try {
+                    Thread.sleep(16);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                //response = sender.getResponse();
+                //System.out.println(response);
             } while (response != 2);
         }).start();
+    }
+
+    public void viewScreen() {
+        new Thread(() -> {
+            receiver.connect();
+            while (true) {
+                System.out.println("Receiving...");
+                byte[][] imageMessy = receiver.getSplitImage();
+                shareScreen.putImage(ImageUtils.assembleImage(imageMessy));
+                //receiver.checkDisconnect();
+            }
+        }).start();
+
     }
 }
