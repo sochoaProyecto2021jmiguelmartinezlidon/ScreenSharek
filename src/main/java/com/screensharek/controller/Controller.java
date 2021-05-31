@@ -94,9 +94,9 @@ public class Controller {
 
     public void configureButtonsShareScreen() {
         shareScreen.setExitListener(actionEvent -> {
-            receiver.disconnect();
-            startApp();
-            shareScreen.dispose();
+            if (receiver != null)
+                receiver.disconnect();
+            System.exit(0);
         });
 
         shareScreen.setMaximizeListener(actionEvent -> {

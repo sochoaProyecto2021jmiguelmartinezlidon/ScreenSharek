@@ -10,7 +10,6 @@ public class ImageUtils {
             return new byte[0][0];
         }
         byte[][] imageSplit = new byte[(int) numOfPackets][59997];
-        int test = 0;
         for (int i = 0; i < numOfPackets; i++) {
             int k = 3;
             long nPacket = i + 1;
@@ -26,7 +25,6 @@ public class ImageUtils {
                 imageSplit[i][k] = image[j];
                 lengthCount++;
             }
-            test += lengthCount;
             byte[] length = ByteUtils.longToBytes(lengthCount);
             imageSplit[i][1] = length[6];
             imageSplit[i][2] = length[7];
@@ -54,16 +52,20 @@ public class ImageUtils {
             int k = 3;
             for (int j = 0; j < dataLength; j++, k++) {
                 if (j == 0)
-                    imageSort[i] = new byte[(int) dataLength];
-                imageSort[i][j] = imageSplitted[(int) (numPacket - 1)][k];
+                    imageSort[(int) (numPacket - 1)] = new byte[(int) dataLength];
+                imageSort[(int) (numPacket - 1)][j] = imageSplitted[(int) (numPacket - 1)][k];
             }
         }
         return matrixToByteArray(imageSort);
     }
 
     public static byte[] matrixToByteArray(byte[][] matrix) {
+        if (matrix == null)
+            return new byte[0];
         int totalLength = 0;
         for (int i = 0; i < matrix.length; i++) {
+            if (matrix[i] == null)
+                matrix[i] = new byte[0];
             totalLength += matrix[i].length;
         }
         byte[] array = new byte[totalLength];

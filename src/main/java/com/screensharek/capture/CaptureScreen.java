@@ -13,6 +13,9 @@ public class CaptureScreen {
 
     }
 
+    /**
+     * Initialize the capture screen.
+     */
     public void init() {
         try {
             robot = new Robot();
@@ -21,6 +24,10 @@ public class CaptureScreen {
         }
     }
 
+    /**
+     * Take a capture of main screen and return the image in a bytes array with the format jpg.
+     * @return the image in array of bytes.
+     */
     public byte[] takeCapture() {
         BufferedImage bImage = robot.createScreenCapture(new Rectangle(Toolkit.getDefaultToolkit().getScreenSize()));
         ByteArrayOutputStream baos = new ByteArrayOutputStream();

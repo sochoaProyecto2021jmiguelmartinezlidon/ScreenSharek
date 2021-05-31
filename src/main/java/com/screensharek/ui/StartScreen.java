@@ -3,6 +3,7 @@ package com.screensharek.ui;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,9 @@ public class StartScreen {
         configurePanelButton();
         configureShareButton();
         configureConnectButton();
+        Image image = new ImageIcon(StartScreen.class.getResource("/aleta.png")).getImage();
+        frame.setIconImage(image);
+        frame.setTitle("ScreenSharek");
         frame.setVisible(true);
     }
 

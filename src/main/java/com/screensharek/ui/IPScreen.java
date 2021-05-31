@@ -4,10 +4,14 @@ package com.screensharek.ui;
 import com.screensharek.components.JImage;
 
 import javax.swing.*;
+import javax.swing.text.NumberFormatter;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.IOException;
+import java.text.NumberFormat;
 
 public class IPScreen {
 
@@ -38,6 +42,9 @@ public class IPScreen {
         startPanels();
         startForm();
         startButtons();
+        Image image = new ImageIcon(StartScreen.class.getResource("/aleta.png")).getImage();
+        frame.setIconImage(image);
+        frame.setTitle("ScreenSharek");
         frame.setVisible(true);
     }
 
@@ -50,7 +57,7 @@ public class IPScreen {
         ipLabel = new JLabel();
         portLabel = new JLabel();
         ipTextField = new JTextField();
-        portTextField = new JTextField();
+        portTextField = new JFormattedTextField();
         accept = new JButton();
         cancel = new JButton();
         master = new JPanel();
@@ -70,6 +77,7 @@ public class IPScreen {
             // TODO: Delete print stack trace when develop is end.
             e.printStackTrace();
             font = new Font("Arial", Font.PLAIN, 30);
+            System.out.println("entra al catch");
         }
     }
 
@@ -91,8 +99,9 @@ public class IPScreen {
      * Set de text in the top of the window.
      */
     public void setDescriptionText() {
-        description.setText(getTextByMode());
+        GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(font);
         description.setFont(font);
+        description.setText(getTextByMode());
         description.setAlignmentX(Component.CENTER_ALIGNMENT);
         description.setForeground(new Color(158, 14, 86));
         description.setBackground(new Color(30, 30, 30));
@@ -123,7 +132,8 @@ public class IPScreen {
      * Create form of the window.
      */
     public void startForm() {
-        JImage img = new JImage(IPScreen.class.getResource("/TextBox.png").getPath());
+        Image image = new ImageIcon(IPScreen.class.getResource("/TextBox.png")).getImage();
+        JImage img = new JImage(image);
         img.setFormat(JImage.Format.ORIGINAL);
         img.setPreferredSize(new Dimension(300, 41));
         ipTextField.setBorder(null);
@@ -151,7 +161,8 @@ public class IPScreen {
         constraints.gridy = 0;
         form.add(img, constraints);
 
-        JImage img2 = new JImage(IPScreen.class.getResource("/TextBox.png").getPath());
+        Image image2 = new ImageIcon(IPScreen.class.getResource("/TextBox.png")).getImage();
+        JImage img2 = new JImage(image2);
         img2.setFormat(JImage.Format.ORIGINAL);
         img2.setPreferredSize(new Dimension(300, 41));
         portTextField.setBorder(null);
@@ -160,6 +171,47 @@ public class IPScreen {
         portTextField.setOpaque(false);
         portTextField.setFont(font);
         portTextField.setForeground(new Color(71, 13, 121));
+        portTextField.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent keyEvent) {
+                if (portTextField.getText().length() < 5) {
+                    try {
+                        if (Integer.parseInt(portTextField.getText()) > 65535) {
+                            portTextField.setText(String.valueOf(65535));
+                            return;
+                        }
+                    } catch (Exception e) {
+
+                    }
+                        switch (keyEvent.getKeyChar()) {
+                            case '0':
+                            case '1':
+                            case '2':
+                            case '3':
+                            case '4':
+                            case '5':
+                            case '6':
+                            case '7':
+                            case '8':
+                            case '9':
+                            case KeyEvent.VK_BACK_SPACE:
+                                return;
+                        }
+                }
+                keyEvent.consume();
+                Toolkit.getDefaultToolkit().beep();
+            }
+
+            @Override
+            public void keyPressed(KeyEvent keyEvent) {
+
+            }
+
+            @Override
+            public void keyReleased(KeyEvent keyEvent) {
+
+            }
+        });
         img2.add(portTextField);
 
         portLabel.setText("port: ");
@@ -256,7 +308,13 @@ public class IPScreen {
     }
 
     public int getPort() {
-        return Integer.parseInt(portTextField.getText());
+        int port;
+        try {
+            port = Integer.parseInt(portTextField.getText());
+        } catch (NumberFormatException e) {
+            port = 9999;
+        }
+        return port;
     }
 
     public void dispose() {

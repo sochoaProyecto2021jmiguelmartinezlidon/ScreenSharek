@@ -27,6 +27,9 @@ public class ShareScreen {
         startFrame();
         startImageComponent();
         startButtons();
+        Image image = new ImageIcon(StartScreen.class.getResource("/aleta.png")).getImage();
+        frame.setIconImage(image);
+        frame.setTitle("ScreenSharek");
         frame.setVisible(true);
     }
 
@@ -41,12 +44,12 @@ public class ShareScreen {
         frame.setSize(1280, 720);
         frame.setMinimumSize(new Dimension(854, 480));
         frame.setLocationRelativeTo(null);
-        frame.setBackground(new Color(30, 30, 30));
+        frame.getContentPane().setBackground(new Color(30, 30, 30));
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
 
     private void startImageComponent() {
-        screen.setImage(ShareScreen.class.getResource("/Testeo.png").getPath());
+        screen.setImage(ShareScreen.class.getResource("/SinTransmision.png").getPath());
         screen.setLayout(new BorderLayout());
         screen.setFormat(JImage.Format.STRETCH);
         frame.add(screen);
