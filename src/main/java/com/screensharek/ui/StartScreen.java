@@ -208,6 +208,10 @@ public class StartScreen {
         frame.dispose();
     }
 
+    /**
+     * Switch visibility of frame.
+     * @param visible
+     */
     public void setVisible(boolean visible) {
         frame.setVisible(visible);
     }

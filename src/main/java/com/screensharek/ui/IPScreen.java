@@ -276,6 +276,10 @@ public class IPScreen {
         buttons.add(accept);
     }
 
+    /**
+     * Return the text to put in top of screen
+     * @return the text displayed on IPScreen
+     */
     private String getTextByMode() {
         switch (mode) {
             case WATCHING:
@@ -286,27 +290,52 @@ public class IPScreen {
         return "";
     }
 
+    /**
+     * Set the ip and port in text fields.
+     * @param ip
+     * @param port
+     */
     public void setIpAndPort(String ip, String port) {
         ipTextField.setText(ip);
         portTextField.setText(port);
     }
 
+    /**
+     * Set the listener to accept button.
+     * @param listener
+     */
     public void setAcceptListener(ActionListener listener) {
         accept.addActionListener(listener);
     }
 
+    /**
+     * Set the listener to cancel button.
+     * @param listener
+     */
     public void setCancelListener(ActionListener listener) {
         cancel.addActionListener(listener);
     }
 
+    /**
+     * Return the mode that user selected.
+     * @return the mode selected.
+     */
     public ShareScreen.Mode getMode() {
         return mode;
     }
 
+    /**
+     * Return the ip of text field.
+     * @return the ip in text field.
+     */
     public String getIp() {
         return ipTextField.getText();
     }
 
+    /**
+     * Return the port of text field.
+     * @return the port of text field.
+     */
     public int getPort() {
         int port;
         try {
@@ -317,6 +346,9 @@ public class IPScreen {
         return port;
     }
 
+    /**
+     * Dispose the screen.
+     */
     public void dispose() {
         frame.dispose();
     }

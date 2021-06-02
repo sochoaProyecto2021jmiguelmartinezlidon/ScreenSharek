@@ -21,10 +21,8 @@ public class JImage extends JComponent {
         this.image = image;
     }
 
-    // FIXME: 08/06/2020 This has no sense, ..., in a constructor the object is not linked to any UI tree
-    //  so the repaint has no effect
     public JImage() {
-        repaint();
+
     }
 
     public JImage(byte[] img) {

@@ -2,6 +2,11 @@ package com.screensharek.utils;
 
 public class ImageUtils {
 
+    /**
+     * Split an image passed in parameters in byte array.
+     * @param image array of bytes.
+     * @return the split image in a matrix of bytes.
+     */
     public static byte[][] splitImage(byte[] image) {
         double parts = image.length / 59997.0f;
         double numOfPackets = Math.ceil(parts);
@@ -32,6 +37,11 @@ public class ImageUtils {
         return imageSplit;
     }
 
+    /**
+     * By an split image rebuild a image in an array of bytes.
+     * @param imageSplitted split image messy.
+     * @return the image assembled.
+     */
     public static byte[] assembleImage(byte[][] imageSplitted) {
         if (imageSplitted == null)
             return new byte[0];
@@ -59,6 +69,11 @@ public class ImageUtils {
         return matrixToByteArray(imageSort);
     }
 
+    /**
+     * Rebuild a image in array of bytes by an split image shorted.
+     * @param matrix split image sorted
+     * @return image in array of bytes.
+     */
     public static byte[] matrixToByteArray(byte[][] matrix) {
         if (matrix == null)
             return new byte[0];

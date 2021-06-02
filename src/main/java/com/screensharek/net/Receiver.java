@@ -12,38 +12,73 @@ public class Receiver {
     private DatagramSocket socketUDP;
     private boolean disconnect = false;
 
+    /**
+     * Get the ip server configured in sender.
+     * @return ip of sender.
+     */
     public String getIpServer() {
         return ipServer;
     }
 
+    /**
+     * Set ip of sender.
+     * @param ipServer
+     */
     public void setIpServer(String ipServer) {
         this.ipServer = ipServer;
     }
 
+    /**
+     * Get the port of sender.
+     * @return the port  of sender.
+     */
     public int getPortServer() {
         return portServer;
     }
 
+    /**
+     * Set the port of the sender.
+     * @param portServer
+     */
     public void setPortServer(int portServer) {
         this.portServer = portServer;
     }
 
+    /**
+     * Get the InetAddress of the sender.
+     * @return InetAddress with sender configuration.
+     */
     public InetAddress getIaServer() {
         return iaServer;
     }
 
+    /**
+     * Set InetAddress of sender.
+     * @param iaServer
+     */
     public void setIaServer(InetAddress iaServer) {
         this.iaServer = iaServer;
     }
 
+    /**
+     * Get the socket UDP of receiver.
+     * @return DatagramSocket of receiver.
+     */
     public DatagramSocket getSocketUDP() {
         return socketUDP;
     }
 
+    /**
+     * Set the socket of the receiver.
+     * @param socketUDP
+     */
     public void setSocketUDP(DatagramSocket socketUDP) {
         this.socketUDP = socketUDP;
     }
 
+    /**
+     * Connect the receiver with the sender.
+     */
     public void connect() {
         if (iaServer == null) {
             try {
@@ -65,6 +100,10 @@ public class Receiver {
         }
     }
 
+    /**
+     * Receive the split image from sender.
+     * @return the split image without any order.
+     */
     public byte[][] getSplitImage() {
         byte[][] imageMessy = null;
         try {
@@ -87,6 +126,11 @@ public class Receiver {
         return imageMessy;
     }
 
+    /**
+     * Return the number of packets that compose an image.
+     * @param packet first byte of the packet.
+     * @return the number of packets that compose an image.
+     */
     public static int getNumberOfPackets(byte[] packet) {
         ByteUtils.resetBuffer();
         long packetInfo = ByteUtils.bytesToLong(packet);
@@ -94,6 +138,10 @@ public class Receiver {
         return (int) numOfPackets;
     }
 
+    /**
+     * Check if the sender is disconnected
+     * @return true if is disconnected or false if keeps connected.
+     */
     public boolean checkDisconnect() {
         byte[] buff = new byte[] {1};
         DatagramPacket packet = new DatagramPacket(buff, buff.length, iaServer, portServer);
@@ -108,10 +156,16 @@ public class Receiver {
         return disconnect;
     }
 
+    /**
+     * Disconnect receiver.
+     */
     public void disconnect() {
         disconnect = true;
     }
 
+    /**
+     * Close the socket.
+     */
     public void close() {
         socketUDP.close();
     }

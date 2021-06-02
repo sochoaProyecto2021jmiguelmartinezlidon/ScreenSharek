@@ -21,6 +21,10 @@ public class ShareScreen {
     private final Icon minimizeIcon = new ImageIcon(ShareScreen.class.getResource("/FullscreenMinimize.png"));
     private final Icon maximizeIcon = new ImageIcon(ShareScreen.class.getResource("/FullscreenMaximize.png"));
 
+    /**
+     * Initialize the ShareScreen.
+     * @param mode
+     */
     public void init(Mode mode) {
         this.mode = mode;
         startComponents();
@@ -33,6 +37,9 @@ public class ShareScreen {
         frame.setVisible(true);
     }
 
+    /**
+     * Initialize the components in the screen.
+     */
     private void startComponents() {
         frame = new JFrame();
         screen = new JImage();
@@ -40,6 +47,9 @@ public class ShareScreen {
         exit = new JButton();
     }
 
+    /**
+     * Launch the frame.
+     */
     private void startFrame() {
         frame.setSize(1280, 720);
         frame.setMinimumSize(new Dimension(854, 480));
@@ -48,6 +58,9 @@ public class ShareScreen {
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
 
+    /**
+     * Initialize the component that contains the images.
+     */
     private void startImageComponent() {
         screen.setImage(ShareScreen.class.getResource("/SinTransmision.png").getPath());
         screen.setLayout(new BorderLayout());
@@ -55,6 +68,9 @@ public class ShareScreen {
         frame.add(screen);
     }
 
+    /**
+     * Initialize the buttons of the screen.
+     */
     private void startButtons() {
 
 
@@ -90,14 +106,25 @@ public class ShareScreen {
         screen.add(panel, BorderLayout.PAGE_END);
     }
 
+    /**
+     * Set the listener to exit button.
+     * @param listener
+     */
     public void setExitListener(ActionListener listener) {
         exit.addActionListener(listener);
     }
 
+    /**
+     * Set the listener to maximize the screen.
+     * @param listener
+     */
     public void setMaximizeListener(ActionListener listener) {
         maximize.addActionListener(listener);
     }
 
+    /**
+     * Switch the screen state between maximize or minimize.
+     */
     public void maximizeMinimize() {
         if (isMaximized) {
             frame.setExtendedState(JFrame.NORMAL);
@@ -113,10 +140,17 @@ public class ShareScreen {
 
     }
 
+    /**
+     * Dispose de frame.
+     */
     public void dispose() {
         frame.dispose();
     }
 
+    /**
+     * Put the image to display.
+     * @param img to display.
+     */
     public void putImage(byte[] img) {
         screen.setImage(img);
     }

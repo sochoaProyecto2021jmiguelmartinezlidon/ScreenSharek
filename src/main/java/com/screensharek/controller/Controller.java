@@ -20,6 +20,9 @@ public class Controller {
 
     private CaptureScreen captureScreen;
 
+    /**
+     * Initialize the app.
+     */
     public void startApp() {
         startScreen = new StartScreen();
         startScreen.init();
@@ -42,29 +45,51 @@ public class Controller {
         });
     }
 
+    /**
+     * Initialize the sender.
+     */
     public void initSender() {
         sender = new Sender();
         sender.init();
     }
 
+    /**
+     * Configure the view IpScreen.
+     */
     public void configureIpScreen() {
         ipScreen.setIpAndPort(sender.getIp(), String.valueOf(sender.getPort()));
     }
 
+    /**
+     * Configure the receiver with the ip and port passed by parameters.
+     * @param ip of the computer receiver.
+     * @param port of the computer receiver.
+     */
     public void setConfigurationReceiver(String ip, int port) {
         receiver.setIpServer(ip);
         receiver.setPortServer(port);
     }
 
+    /**
+     * Configure the address that sender must connect
+     * @param ip of the computer to connect.
+     * @param port of the computer to connect.
+     */
     public void setConfigurationSender(String ip, int port) {
         sender.setIp(ip);
         sender.setPort(port);
     }
 
+    /**
+     * Initialize the receiver.
+     */
     public void initReceiver() {
         receiver = new Receiver();
     }
 
+    /**
+     * Configure the buttons of IpScreen.
+     */
     public void configureIpScreenButtons() {
         if (ipScreen.getMode() == ShareScreen.Mode.WATCHING) {
             ipScreen.setAcceptListener(actionEvent -> {
@@ -92,6 +117,9 @@ public class Controller {
         });
     }
 
+    /**
+     * Configure the buttons of ShareScreen.
+     */
     public void configureButtonsShareScreen() {
         shareScreen.setExitListener(actionEvent -> {
             if (receiver != null)
@@ -104,6 +132,9 @@ public class Controller {
         });
     }
 
+    /**
+     * Start to share screen in a new thread.
+     */
     public void shareScreen() {
         new Thread(() -> {
             sender.startShare();
@@ -115,7 +146,6 @@ public class Controller {
             do {
                 byte[] image = captureScreen.takeCapture();
                 shareScreen.putImage(image);
-                System.out.println("Sending...");
                 sender.sendImage(ImageUtils.splitImage(image));
                 try {
                     Thread.sleep(16);
@@ -128,11 +158,13 @@ public class Controller {
         }).start();
     }
 
+    /**
+     * Start to show the images are coming from the other computer in a new thread.
+     */
     public void viewScreen() {
         new Thread(() -> {
             receiver.connect();
             while (true) {
-                System.out.println("Receiving...");
                 byte[][] imageMessy = receiver.getSplitImage();
                 shareScreen.putImage(ImageUtils.assembleImage(imageMessy));
                 //receiver.checkDisconnect();
