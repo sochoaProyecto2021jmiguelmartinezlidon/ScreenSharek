@@ -2,9 +2,12 @@ package com.screensharek.ui;
 
 import com.screensharek.components.JImage;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 public class ShareScreen {
 
@@ -62,7 +65,14 @@ public class ShareScreen {
      * Initialize the component that contains the images.
      */
     private void startImageComponent() {
-        screen.setImage(ShareScreen.class.getResource("/SinTransmision.png").getPath());
+        //screen.setImage(ShareScreen.class.getResource("/SinTransmision.png").getPath());
+        //Icon disconnect = new ImageIcon(ShareScreen.class.getResource("/SinTransmision.png"));
+        Image disconnect = null;
+        try {
+            disconnect = ImageIO.read(ShareScreen.class.getResource("/SinTransmision.png"));
+            screen.setImage(disconnect);
+        } catch (IOException e) {
+        }
         screen.setLayout(new BorderLayout());
         screen.setFormat(JImage.Format.STRETCH);
         frame.add(screen);

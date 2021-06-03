@@ -35,7 +35,7 @@ public class CaptureScreen {
             ImageIO.write(bImage, "jpg", baos);
             return baos.toByteArray();
         } catch (IOException e) {
-            e.printStackTrace();
+
         }
         return new byte[0];
     }

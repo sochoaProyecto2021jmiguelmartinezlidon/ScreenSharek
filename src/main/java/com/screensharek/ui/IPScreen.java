@@ -175,14 +175,6 @@ public class IPScreen {
             @Override
             public void keyTyped(KeyEvent keyEvent) {
                 if (portTextField.getText().length() < 5) {
-                    try {
-                        if (Integer.parseInt(portTextField.getText()) > 65535) {
-                            portTextField.setText(String.valueOf(65535));
-                            return;
-                        }
-                    } catch (Exception e) {
-
-                    }
                         switch (keyEvent.getKeyChar()) {
                             case '0':
                             case '1':
@@ -209,7 +201,14 @@ public class IPScreen {
 
             @Override
             public void keyReleased(KeyEvent keyEvent) {
-
+                try {
+                    int port = Integer.parseInt(portTextField.getText());
+                    if (port > 65535) {
+                        portTextField.setText(String.valueOf(65535));
+                        Toolkit.getDefaultToolkit().beep();
+                    }
+                } catch (Exception e) {
+                }
             }
         });
         img2.add(portTextField);
